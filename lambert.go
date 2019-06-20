@@ -1,4 +1,4 @@
-package main
+package lambert
 
 import (
 	"math"
@@ -8,7 +8,7 @@ var gslDblEpsilon = 2.2204460492503131e-16
 var oneOverE = 1 / math.E
 
 type result struct {
-	val     float64
+	Val     float64
 	err     float64
 	iters   int
 	success bool
@@ -42,7 +42,7 @@ func halleyInteration(x, wInitial float64, maxIters int) result {
 		tol = gslDblEpsilon * math.Max(math.Abs(w), 1.0/(math.Abs(p)*e))
 
 		if math.Abs(t) < tol {
-			r.val = w
+			r.Val = w
 			r.err = 2.0 * tol
 			r.iters = i
 			r.success = true
@@ -51,7 +51,7 @@ func halleyInteration(x, wInitial float64, maxIters int) result {
 	}
 
 	/* should never get here */
-	r.val = w
+	r.Val = w
 	r.err = math.Abs(w)
 	r.iters = i
 	r.success = true
@@ -88,7 +88,7 @@ func GslSfLambertW0E(x float64) result {
 	r := result{}
 
 	if x == 0.0 {
-		r.val = 0.0
+		r.Val = 0.0
 		r.err = 0.0
 		r.success = true
 		return r
@@ -99,15 +99,15 @@ func GslSfLambertW0E(x float64) result {
 		 * answer is quite accurate in that case. Anyway, we have
 		 * to return GSL_EDOM.
 		 */
-		r.val = -1.0
+		r.Val = -1.0
 		r.err = math.Sqrt(-q)
 		r.success = false // GSL_EDOM
 		return r
 	} else if q < 1.0e-03 {
 		/* series near -1/E in sqrt(q) */
 		root := math.Sqrt(q)
-		r.val = seriesEval(root)
-		r.err = 2.0 * gslDblEpsilon * math.Abs(r.val)
+		r.Val = seriesEval(root)
+		r.err = 2.0 * gslDblEpsilon * math.Abs(r.Val)
 		r.success = true
 		return r
 	}
